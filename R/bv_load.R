@@ -76,7 +76,7 @@ bv_load_data <- function() {
 
   # Put a - sign in front of the variables we want to drop,
   # and leave a comment with a quick explanation if needed.
-  # for example, see line 99, where I put a '-' in front of
+  # for example, see line 114, where I put a '-' in front of
   # bid, indicating it would be dropped, and said I was dropping
   # it because it is an identifier.
 

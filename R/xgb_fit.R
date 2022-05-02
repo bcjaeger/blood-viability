@@ -19,6 +19,7 @@ xgb_fit <- function(data = data_adu_init, preproc = preproc) {
 
   params <- list(objective = 'binary:logistic',
                  max_depth = 2,
+                 eta = 0.3,
                  eval_metric = 'auc')
 
   fit_cv <- xgb.cv(data = x,
@@ -35,29 +36,6 @@ xgb_fit <- function(data = data_adu_init, preproc = preproc) {
     params = params
   )
 
-  # done with function here ----
-
-  vi <- xgb.importance(model = fit)[1:10, ]
-
-  shap <- fit |>
-    predict(newdata = x, predcontrib = TRUE) |>
-    as_tibble() |>
-    select(all_of(vi$Feature))
-
-  ftr <- vi$Feature[2]
-
-  gg_data <- tibble(observed = train[[ftr]],
-                    shap = shap[[ftr]])
-
-  ggplot(gg_data) +
-    aes(x = observed, y = shap) +
-    geom_point()
-
-  ggplot(data = train, aes(x = Htcmavg_hwwt, y = outcome)) +
-    geom_point(position = position_jitter(height = 1/10)) +
-    geom_smooth()
-
-
-
+  list(fit = fit, x = x, y = y)
 
 }

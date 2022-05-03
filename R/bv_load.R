@@ -88,18 +88,19 @@ bv_load_data <- function() {
 
   data_out <- data_preselect |>
     select(
-      outcome,
-      ppt_type,
-      vial_type,
+      outcome,   #grouping
+      ppt_type,  #grouping
+      vial_type, #grouping
+      
       aablack_psca,
       addnlmsrs,
       -addnlmsrs_spc, # just text
       alcogr24_pcaa,
       alcogr24_pcab,
       aliquotamnt,
-      aliquotCode,
-      aliquotDescription,
-      aliquotGUID,
+      -aliquotCode, #whenever you have a code/description/guid set of variables like this, the values always correspond and you only need to use one
+      aliquotDescription, #grouping
+      -aliquotGUID,
       aliquotmsrmnt,
       allex_pcaa,
       anestallerg_pcaa,
@@ -107,10 +108,10 @@ bv_load_data <- function() {
       asExpected,
       asian_psca,
       assignmentcode,
-      assignmentdescription,
-      assignmentGUID,
-      barcodeID_pcaa,
-      barcodeID_pcab,
+      -assignmentdescription,
+      -assignmentGUID,
+      -barcodeID_pcaa,#Form ID
+      -barcodeID_pcab,#Form ID
       -bid, # identifier
       biotindays_pcaa,
       biotingr3_pcaa,
@@ -118,19 +119,19 @@ bv_load_data <- function() {
       bleedeasy_pcaa,
       BLOincubate,
       bloodhow,
-      BLOsample_comnt,
-      BLOsample_comp,
-      BLOsample_stat,
+      -BLOsample_comnt, #comment
+      BLOsample_comp, #significant
+      BLOsample_stat, #significant
       bruising_pcaa,
       bruising_pcab,
-      caffgr24_pcaa,
+      caffgr24_pcaa, #if you use a pcab / pcaa pair then you should probably use one based on the timepoint (24 hr post and 24 hr rest get pcab)
       caffgr24_pcab,
       caffhrs_pcaa,
       caffhrs_pcab,
       calculatedAge,
       cauc_psca,
       clean_pcaa,
-      codedSiteID,
+      -codedSiteID,#masked copy of siteid
       coll_staffid,
       collected,
       collectionQtr,
@@ -140,11 +141,11 @@ bv_load_data <- function() {
       -collForm_d_visit,
       -collForm_recordthread,
       -collForm_staffID,
-      colorCode,
-      colorDescription,
-      colorGUID,
+      colorCode, #I think this corresponds to sample type?
+      -colorDescription,
+      -colorGUID,
       -comments,
-      d_fusample_pcaa,
+      d_fusample_pcaa, #combine if used
       d_fusample_pcab,
       d_lastfluvac_pcaa,
       d_mencyc_pcaa,
@@ -153,31 +154,31 @@ bv_load_data <- function() {
       -deviationComments,
       dffcltdraw,
       domainCode,
-      domainDescription,
-      domainguid,
-      drinkgr10_pcaa,
+      -domainDescription,
+      -domainguid,
+      drinkgr10_pcaa,#combine if used
       drinkgr10_pcab,
       drinkhrs_pcaa,
-      drinkshake_pcaa,
+      drinkshake_pcaa,#combine if used
       drinkshake_pcab,
       drinkwater_pcaa,
-      eatgr10_pcaa,
+      eatgr10_pcaa,#combine if used
       eatgr10_pcab,
       eathrs_pcaa,
       exdays_pcaa,
-      expectedSample,
+      -expectedSample,#always 1
       fainting_pcaa,
       feelwell_pcaa,
       freezetime,
-      -fuaddcom_pcaa,
+      -fuaddcom_pcaa,#combine if used
       -fuaddcom_pcab,
       fuoth_pcaa,
       fuoth_spc_pcaa,
-      fushow_pcaa,
+      fushow_pcaa,#combine if used
       fushow_pcab,
-      fusignsymp_pcaa,
+      fusignsymp_pcaa,#combine if used
       fusignsymp_pcab,
-      fustaffid_pcaa,
+      fustaffid_pcaa,#combine if used
       fustaffid_pcab,
       fwMatch,
       haex_pcaa,
@@ -185,7 +186,7 @@ bv_load_data <- function() {
       hemolysis,
       Htcmavg_hwwt,
       incubatetime,
-      infoCorrect,
+      -infoCorrect,#if this isn't always 1 then it would probably just be a proxy for date?
       -labelGUID, # identifier
       -labelid, # identifier,
       lastfluvacna_pcaa,
@@ -195,16 +196,16 @@ bv_load_data <- function() {
       -Live_cell_concentration, # part of the outcome
       -low_rin, # part of the outcome
       -low_viability, # part of the outcome
-      manifestGUID,
-      meetprereq_pcaa,
+      -manifestGUID,#proxy for shipment
+      meetprereq_pcaa,#combine if used
       meetprereq_pcab,
       mencycdays_pcaa,
       mencycna_pcaa,
       MTP_ALQQUALITYCODE,
-      MTP_EXPECTEDVOL,
+      -MTP_EXPECTEDVOL,#always same for same aliquot type
       -MTP_OGLABELID, # identifier
-      MTP_PARTIALVOL,
-      MTP_RECEIVEDDate,
+      -MTP_PARTIALVOL,#always same for same aliquot type
+      MTP_RECEIVEDDate,#combine all date variables to get things like shipping time?
       -MTP_REPOLABELID,
       MTP_SHIPFROZEN,
       MTP_SHIPNUM,
@@ -215,11 +216,11 @@ bv_load_data <- function() {
       -notes_pcaa,
       -notes_pcab,
       nsaiddays_pcaa,
-      nsaidgr24_pcab,
+      nsaidgr24_pcab,#combine if used
       nsaidgr7_pcaa,
-      numbness_pcaa,
+      numbness_pcaa,#combine if used
       numbness_pcab,
-      painproc_pcaa,
+      painproc_pcaa,#combine if used
       painproc_pcab,
       -participantGUID, # identifier
       -pid, # identifier
@@ -227,38 +228,38 @@ bv_load_data <- function() {
       protocol,
       raceoth_psca,
       randomGroupCode,
-      randomGroupDescription,
-      randomGroupGUID,
+      -randomGroupDescription,
+      -randomGroupGUID,
       -recid,
-      reconcileStatus,
+      reconcileStatus,#they should all be reconciled
       -recordthread_pcaa,
       -recordthread_pcab,
       -RIN, # dropped b/c it is the outcome
       samemeal_pcab,
-      sampleGroupCode,
-      sampleGroupDescription,
-      sampleGroupGUID,
-      sampleGroupOrder,
-      sampleNumber,
-      sampleprocessGroupCode,
-      sampleprocessGroupDescription,
-      sampleprocessGroupGUID,
-      sampleprocessGroupOrder,
+      -sampleGroupCode,#always same for same aliquot type
+      -sampleGroupDescription,
+      -sampleGroupGUID,
+      -sampleGroupOrder,
+      -sampleNumber,
+      -sampleprocessGroupCode,#always same for same aliquot type
+      -sampleprocessGroupDescription,
+      -sampleprocessGroupGUID,
+      -sampleprocessGroupOrder,
       sampletime,
-      sampleTypeCode,
-      sampleTypeDescription,
-      sampleTypeGUID,
-      sampleTypeOrder,
-      schedulecode,
-      scheduleDescription,
-      scheduleGUID,
+      -sampleTypeCode,#always same for same aliquot type
+      -sampleTypeDescription,
+      -sampleTypeGUID,
+      -sampleTypeOrder,
+      schedulecode,#important
+      -scheduleDescription,
+      -scheduleGUID,
       sedconex_pcaa,
       sedex_pcaa,
       sex_psca,
-      siteGUID,
+      -siteGUID,
       siteID,
-      siteName,
-      skinirritat_pcaa,
+      -siteName,
+      skinirritat_pcaa,#combine if used
       skinirritat_pcab,
       spintime,
       staffID,
@@ -270,7 +271,7 @@ bv_load_data <- function() {
       study,
       supine30,
       supinemin,
-      swelling_pcaa,
+      swelling_pcaa,#combine if used
       swelling_pcab,
       t_BLOfreeze,
       t_BLOincubate,
@@ -281,20 +282,20 @@ bv_load_data <- function() {
       t_syrstp,
       t_syrstrt,
       testWeight,
-      timepoint,
-      timepointDescription,
-      timepointGUID,
-      timepointOrder,
-      timepointVersion,
-      uploadGUID,
+      -timepoint,
+      -timepointDescription,
+      -timepointGUID,
+      timepointOrder,#probably make your own timepoint variable that matches on time
+      -timepointVersion,
+      -uploadGUID,
       verified,
       Viability,
       -vialLabel,
       visitCode,
-      visitDescription,
-      visitGUID,
+      -visitDescription,
+      -visitGUID,
       visitstatus,
-      wtkg_pcaa,
+      wtkg_pcaa,#combine if used?  If there is a big difference that could be interesting, but probably irrelevant to this
       wtkg_pcab
     )
 

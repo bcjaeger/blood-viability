@@ -170,16 +170,16 @@ bv_load_data <- function() {
       fainting_pcaa,
       feelwell_pcaa,
       freezetime,
-      -fuaddcom_pcaa,#combine if used
-      -fuaddcom_pcab,
-      fuoth_pcaa,
-      fuoth_spc_pcaa,
-      fushow_pcaa,#combine if used
-      fushow_pcab,
-      fusignsymp_pcaa,#combine if used
-      fusignsymp_pcab,
-      fustaffid_pcaa,#combine if used
-      fustaffid_pcab,
+      -fuaddcom_pcaa,#combine if used #not relevant to sample collection/processing
+      -fuaddcom_pcab,#not relevant to sample collection/processing
+      -fuoth_pcaa,#not relevant to sample collection/processing
+      -fuoth_spc_pcaa,#not relevant to sample collection/processing
+      -fushow_pcaa,#combine if used
+      -fushow_pcab,#not relevant to sample collection/processing
+      -fusignsymp_pcaa,#combine if used
+      -fusignsymp_pcab,#not relevant to sample collection/processing
+      -fustaffid_pcaa,#combine if used#not relevant to sample collection/processing
+      -fustaffid_pcab,#not relevant to sample collection/processing
       fwMatch,
       haex_pcaa,
       health_pcaa,
@@ -257,7 +257,7 @@ bv_load_data <- function() {
       sedex_pcaa,
       sex_psca,
       -siteGUID,
-      siteID,
+      -siteID,#you have coded site ID
       -siteName,
       skinirritat_pcaa,#combine if used
       skinirritat_pcab,
@@ -289,7 +289,7 @@ bv_load_data <- function() {
       -timepointVersion,
       -uploadGUID,
       verified,
-      Viability,
+      Viability,#where did this come from? 
       -vialLabel,
       visitCode,
       -visitDescription,

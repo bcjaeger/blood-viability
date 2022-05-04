@@ -141,18 +141,18 @@ bv_load_data <- function() {
       -collForm_d_visit,
       -collForm_recordthread,
       -collForm_staffID,
-      colorCode, #I think this corresponds to sample type?
+      -colorCode, #I think this corresponds to sample type? #it does and won't be relevant 
       -colorDescription,
       -colorGUID,
       -comments,
       d_fusample_pcaa, #combine if used
       d_fusample_pcab,
-      d_lastfluvac_pcaa,
-      d_mencyc_pcaa,
+      d_lastfluvac_pcaa, #compare to date of collection
+      d_mencyc_pcaa,#compare to date of collection
       d_visit_pca, # this was derived above
       deviation,
       -deviationComments,
-      dffcltdraw,
+      dffcltdraw, 
       domainCode,
       -domainDescription,
       -domainguid,
@@ -208,7 +208,7 @@ bv_load_data <- function() {
       MTP_RECEIVEDDate,#combine all date variables to get things like shipping time?
       -MTP_REPOLABELID,
       MTP_SHIPFROZEN,
-      MTP_SHIPNUM,
+      MTP_SHIPNUM, 
       -MTP_SMPBID, # identifier
       MTP_SMPTYPE,
       multiple_pcaa,
@@ -281,7 +281,7 @@ bv_load_data <- function() {
       t_strtprerst_pcaa,
       t_syrstp,
       t_syrstrt,
-      testWeight,
+      testWeight, #this is the participant weight in kg the morning of the sample collection (combination of data from ACRE, ACEE, CORR)
       -timepoint,
       -timepointDescription,
       -timepointGUID,

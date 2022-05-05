@@ -27,3 +27,14 @@ model_viz <- function(model) {
 
 
 }
+
+# ftr <- 'freezetime'
+# col <- 'timepointOrder'
+#
+# gg_data <- tibble(observed = model$x[, ftr, drop=TRUE],
+#                   col = model$x[, col, drop=TRUE],
+#                   shap = model$shap_values[[ftr]])
+#
+# ggplot(gg_data) +
+#   aes(x = observed, y = shap, col = factor(col)) +
+#   geom_point(size = 2.5)

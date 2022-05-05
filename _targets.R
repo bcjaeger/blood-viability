@@ -34,10 +34,11 @@ tar_plan(
                               impute = FALSE,
                               one_hot = TRUE),
 
-  bv_xgb_shap_pax = model_shap(model = bv_xgb_fits_pax),
-
-
-  bv_xgb_figs_pax = model_viz(model = bv_xgb_shap_pax)
+  bv_xgb_fits_pbmc = model_fit(bv_data,
+                               type_subset = 'PBMC SHIPPED',
+                               type_fit = 'xgb',
+                               impute = FALSE,
+                               one_hot = TRUE)
 
 
 )

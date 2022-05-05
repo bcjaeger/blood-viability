@@ -66,7 +66,8 @@ bv_load_data <- function() {
         false =  d_visit_pcaa
       ),
       across(starts_with('d_'),
-             ~ as.numeric(difftime(.x, as.POSIXct('2017-01-01')))),
+             ~ as.numeric(difftime(.x, d_visit_pcaa))),
+             # ~ as.numeric(difftime(.x, as.POSIXct('2017-01-01')))),
       d_diff_mencyc = d_visit_pca - d_mencyc_pcaa,
       d_diff_lastfluvac = d_visit_pca - d_lastfluvac_pcaa,
       across(starts_with("t_"), .fns = hrs_since_midnight)
@@ -86,12 +87,12 @@ bv_load_data <- function() {
   # if you don't see a variable here, it probably got removed above
   # due to having only missing values.
 
-  data_out <- data_preselect |>
+  data_selected <- data_preselect |>
     select(
       outcome,   #grouping
       ppt_type,  #grouping
       vial_type, #grouping
-      
+
       aablack_psca,
       addnlmsrs,
       -addnlmsrs_spc, # just text
@@ -257,7 +258,7 @@ bv_load_data <- function() {
       sedex_pcaa,
       sex_psca,
       -siteGUID,
-      -siteID,#you have coded site ID
+      siteID,#you have coded site ID - will change to coded if we publish
       -siteName,
       skinirritat_pcaa,#combine if used
       skinirritat_pcab,
@@ -289,7 +290,7 @@ bv_load_data <- function() {
       -timepointVersion,
       -uploadGUID,
       verified,
-      Viability,#where did this come from? 
+      -Viability, # this is an outcome for pbmc shipped i think
       -vialLabel,
       visitCode,
       -visitDescription,
@@ -299,6 +300,46 @@ bv_load_data <- function() {
       wtkg_pcab
     )
 
+  t_vars <- c("t_BLOfreeze",
+              "t_BLOincubate",
+              "t_BLOspin",
+              "t_liedown",
+              "t_strt24rst_pcab",
+              "t_strtprerst_pcaa",
+              "t_syrstp",
+              "t_syrstrt")
+
+  t_vars_used <- c()
+
+  t_vars_no_prefix <- t_vars |>
+    str_remove("^t_") |>
+    set_names(t_vars)
+
+  data_out <- data_selected
+
+  for( tv in t_vars){
+
+    diff_vars <- t_vars |>
+      setdiff(tv) |>
+      setdiff(t_vars_used)
+
+    for(i in diff_vars){
+
+      name_new <- paste0(
+        't_',  paste(t_vars_no_prefix[c(tv, i)], collapse = '_minus_')
+      )
+
+      data_out[[name_new]] <- data_out[[tv]] - data_out[[i]]
+
+    }
+
+    t_vars_used <- c(t_vars_used, tv)
+
+  }
+
+  not_const <- map_lgl(data_out, ~ length(unique(na.omit(.x))) > 1)
+
+  data_out[, not_const]
 
 
 }

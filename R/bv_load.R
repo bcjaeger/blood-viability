@@ -37,19 +37,12 @@ bv_load_data <- function() {
     mutate(labelid = as.character(labelid),
            vialLabel = as.character(vialLabel))
 
-  # create anchor with d_visit_pcaa and d_visit_pcab
-  #     count number of days since jan 1 2017
-  #     if timepoint is 24 hour timepoint use B instead of A
-  #     if timepoint %in% c(24 hr post, 24 hr Rest 3), use B; ow use A
-  #          diff b/t anchor and d_mencyc_pcaa
-  #          diff b/t anchor and d_lastfluvac_pcaa
-
   not_all_missing <- function(x) !all(is.na(x))
 
   data_preselect <- bind_rows(adu = data_bv_adu,
                               ped = data_bv_ped) |>
     select(where(not_all_missing)) |>
-    # has all missing values.
+    # remove variables with all missing values.
     mutate(
       outcome = case_when(
         type %in% c('PAX', 'PBMC QC') ~ low_rin,
@@ -66,14 +59,25 @@ bv_load_data <- function() {
         false =  d_visit_pcaa
       ),
       across(starts_with('d_'),
-             ~ as.numeric(difftime(.x, d_visit_pcaa))),
-             # ~ as.numeric(difftime(.x, as.POSIXct('2017-01-01')))),
+             ~ as.numeric(difftime(d_visit_pca, .x, units = 'days'))),
       d_diff_mencyc = d_visit_pca - d_mencyc_pcaa,
       d_diff_lastfluvac = d_visit_pca - d_lastfluvac_pcaa,
       across(starts_with("t_"), .fns = hrs_since_midnight)
     ) |>
     rename(vial_type = type) |>  # for clarity
-    select(-d_visit_pcaa, -d_visit_pcab)
+    select(-d_visit_pcaa, -d_visit_pcab,
+           -d_lastfluvac_pcaa, -d_mencyc_pcaa)
+
+  data_preselect |>
+    group_by(bid) |>
+    summarize(outcome = mean(outcome)) |>
+    ggplot(aes(x=outcome)) +
+    geom_histogram(bins = 20)
+
+  data_preselect |>
+    select(outcome, bid, d_diff_lastfluvac, d_diff_mencyc) |>
+    group_by(bid) |>
+    group_split()
 
   # Put a - sign in front of the variables we want to drop,
   # and leave a comment with a quick explanation if needed.
@@ -92,6 +96,14 @@ bv_load_data <- function() {
       outcome,   #grouping
       ppt_type,  #grouping
       vial_type, #grouping
+
+      # these identifiers are used later; dropped in the pre-processing step
+      labelid,
+      bid,
+
+      # comparing to the data of collection
+      d_diff_mencyc,
+      d_diff_lastfluvac,
 
       aablack_psca,
       addnlmsrs,
@@ -113,7 +125,6 @@ bv_load_data <- function() {
       -assignmentGUID,
       -barcodeID_pcaa,#Form ID
       -barcodeID_pcab,#Form ID
-      -bid, # identifier
       biotindays_pcaa,
       biotingr3_pcaa,
       blddraw_pcaa,
@@ -142,18 +153,18 @@ bv_load_data <- function() {
       -collForm_d_visit,
       -collForm_recordthread,
       -collForm_staffID,
-      -colorCode, #I think this corresponds to sample type? #it does and won't be relevant 
+      -colorCode, #I think this corresponds to sample type? #it does and won't be relevant
       -colorDescription,
       -colorGUID,
       -comments,
       d_fusample_pcaa, #combine if used
       d_fusample_pcab,
-      d_lastfluvac_pcaa, #compare to date of collection
-      d_mencyc_pcaa,#compare to date of collection
+      # d_lastfluvac_pcaa, # compared to date of collection with d_diff
+      # d_mencyc_pcaa,     # compared to date of collection with d_diff
       d_visit_pca, # this was derived above
       deviation,
       -deviationComments,
-      dffcltdraw, 
+      dffcltdraw,
       domainCode,
       -domainDescription,
       -domainguid,
@@ -189,7 +200,6 @@ bv_load_data <- function() {
       incubatetime,
       -infoCorrect,#if this isn't always 1 then it would probably just be a proxy for date?
       -labelGUID, # identifier
-      -labelid, # identifier,
       lastfluvacna_pcaa,
       latexallerg_pcaa,
       latino_psca,
@@ -209,7 +219,7 @@ bv_load_data <- function() {
       MTP_RECEIVEDDate,#combine all date variables to get things like shipping time?
       -MTP_REPOLABELID,
       MTP_SHIPFROZEN,
-      MTP_SHIPNUM, 
+      MTP_SHIPNUM,
       -MTP_SMPBID, # identifier
       MTP_SMPTYPE,
       multiple_pcaa,

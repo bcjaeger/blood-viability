@@ -25,12 +25,11 @@ library(cmprsk)
 library(tidyfast)
 library(DT)
 library(conflicted)
+library(rsample)
+library(SHAPforxgboost)
 
 conflict_prefer(':=', 'data.table')
 conflict_prefer("filter", "dplyr")
+conflict_prefer("slice", "dplyr")
 conflict_prefer("renderDataTable", "DT")
-
-
-
-conflict_prefer('filter', 'dplyr')
 conflict_prefer('fixed', 'stringr')

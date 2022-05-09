@@ -103,6 +103,11 @@ ui <- shinyUI(
           width = input_width
         ),
 
+        checkboxInput("smoother",
+                      label = "Add trend line",
+                      value = FALSE),
+
+
         actionButton('do_compute',
                      label = 'Compute')
 
@@ -111,22 +116,10 @@ ui <- shinyUI(
 
       mainPanel(
 
-        tabsetPanel(
+        plotOutput('fig_pax_shap',
+                   brush = "pax_shap_brush"),
 
-          tabPanel(
-            "PAX SHAP",
-            plotOutput('fig_pax_shap',
-                       brush = "pax_shap_brush"),
-            DTOutput('pax_shap_data')
-          ),
-
-          tabPanel(
-            "PAX descriptive",
-            # plotOutput('fig_pax_desc')
-          )
-
-
-        )
+        DTOutput('pax_shap_data')
 
       )
     )
@@ -163,16 +156,18 @@ server = function(input, output, session) {
 
     if(key_list[[input$variable_x]]$type == 'ctns'){
 
+      newmin <- min(bv_xgb_fits_pax$shap_data[[input$variable_x]],
+                    na.rm = TRUE)
+
+      newmax <- max(bv_xgb_fits_pax$shap_data[[input$variable_x]],
+                    na.rm = TRUE)
+
       updateSliderInput(
         session = session,
         inputId = 'bounds_x',
-        min = min(bv_xgb_fits_pax$shap_data[[input$variable_x]],
-                  na.rm = TRUE),
-        max = max(bv_xgb_fits_pax$shap_data[[input$variable_x]],
-                  na.rm = TRUE),
-        value = quantile(bv_xgb_fits_pax$shap_data[[input$variable_x]],
-                         probs = c(.25, .75),
-                         na.rm = TRUE)
+        min = newmin,
+        max = newmax,
+        value = c(newmin, newmax)
       )
 
 
@@ -199,7 +194,7 @@ server = function(input, output, session) {
         fig_mapped <- fig_base +
           aes_string(x = input$variable_x,
                      y = paste(input$variable_x, 'contrib', sep = '_'),
-                     col = input$variable_color)
+                     col = glue::glue("factor({input$variable_color})"))
       }
 
       if(fig_geom %in% c("boxplot")){
@@ -223,6 +218,9 @@ server = function(input, output, session) {
         scale_x_continuous(limits = c(input$bounds_x)),
       'boxplot' = fig_mapped + geom_boxplot()
     )
+
+    if(input$smoother)
+      out <- out + geom_smooth()
 
     out
 
